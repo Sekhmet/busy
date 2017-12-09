@@ -1,61 +1,32 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import getImage from '../helpers/getImage';
 import './Avatar.less';
 
-const defaultImage =
-  'https://res.cloudinary.com/hpiynhbhq/image/upload/v1506948447/p72avlprkfariyti7q2l.png';
-
-class Avatar extends Component {
-  static propTypes = {
-    username: PropTypes.string,
-    size: PropTypes.number,
+const Avatar = ({ username, size }) => {
+  let style = {
+    minWidth: `${size}px`,
+    width: `${size}px`,
+    height: `${size}px`,
   };
 
-  static defaultProps = {
-    username: undefined,
-    size: 34,
-  };
-
-  state = {
-    imageUrl: defaultImage,
-  };
-
-  componentWillMount() {
-    const { username, size } = this.props;
-
-    this.setState({
-      imageUrl: getImage(`@${username}?s=${size}`),
-    });
+  if (username) {
+    style = {
+      ...style,
+      backgroundImage: `url(${getImage(`@${username}?width=${size}&height=${size}`)})`,
+    };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.username !== nextProps.username) {
-      this.setState({
-        imageUrl: getImage(`@${nextProps.username}?s=${nextProps.size}`),
-      });
-    }
-  }
+  return <div className="Avatar" style={style} />;
+};
 
-  onError = () =>
-    this.setState({
-      imageUrl: defaultImage,
-    });
+Avatar.propTypes = {
+  username: PropTypes.string.isRequired,
+  size: PropTypes.number,
+};
 
-  render() {
-    const { username, size } = this.props;
-    const { imageUrl } = this.state;
-
-    return (
-      <img
-        className="Avatar"
-        style={{ minWidth: `${size}px`, width: `${size}px`, height: `${size}px` }}
-        onError={this.onError}
-        alt={username}
-        src={imageUrl}
-      />
-    );
-  }
-}
+Avatar.defaultProps = {
+  size: 100,
+};
 
 export default Avatar;
